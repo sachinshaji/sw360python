@@ -197,13 +197,10 @@ class ComponentsMixin(BaseMixin):
             component_details[param] = locals()[param]
         component_details["componentType"] = component_type
 
-        response = requests.post(
-            url, json=component_details, headers=self.api_headers
-        )
+        response = self.api_post(
+            url, json=component_details)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)
 
     def update_component(self, component: Dict[str, Any], component_id: str) -> Optional[Dict[str, Any]]:
         """Update an existing component
@@ -223,14 +220,7 @@ class ComponentsMixin(BaseMixin):
             raise SW360Error(message="No component id provided!")
 
         url = self.url + "resource/api/components/" + component_id
-        response = requests.patch(
-            url, json=component, headers=self.api_headers,
-        )
-
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
+        return self.api_patch(url, json=component)
 
     def update_component_external_id(self, ext_id_name: str, ext_id_value: str,
                                      component_id: str, update_mode: str = "none") -> Optional[Dict[str, Any]]:
@@ -282,13 +272,9 @@ class ComponentsMixin(BaseMixin):
             raise SW360Error(message="No component id provided!")
 
         url = self.url + "resource/api/components/" + component_id
-        response = requests.delete(
-            url, headers=self.api_headers,
-        )
+        response = self.api_delete(url)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)
 
     def get_users_of_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about the users of a component

@@ -219,7 +219,7 @@ class AttachmentsMixin(BaseMixin):
                 "application/json",
             ),
         }
-        response = requests.post(url, headers=self.api_headers, files=file_data)  # type: ignore
+        response = self.api_post_multipart(url, files=file_data)
         if response.status_code == HTTPStatus.ACCEPTED:
             logger.warning(
                 f"Attachment upload was accepted by {url} but might not be visible yet: {response.text}"

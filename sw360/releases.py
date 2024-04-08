@@ -155,13 +155,10 @@ class ReleasesMixin(BaseMixin):
         release_details["componentId"] = component_id
 
         url = self.url + "resource/api/releases"
-        response = requests.post(
-            url, json=release_details, headers=self.api_headers
-        )
+        response = self.api_post(
+            url, json=release_details)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)
 
     def update_release(self, release: Dict[str, Any], release_id: str) -> Optional[Dict[str, Any]]:
         """Update an existing release
@@ -181,11 +178,7 @@ class ReleasesMixin(BaseMixin):
             raise SW360Error(message="No release id provided!")
 
         url = self.url + "resource/api/releases/" + release_id
-        response = requests.patch(url, json=release, headers=self.api_headers)
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
+        return self.api_patch(url, json=release)
 
     def update_release_external_id(self, ext_id_name: str, ext_id_value: str,
                                    release_id: str, update_mode: str = "none") -> Optional[Dict[str, Any]]:
@@ -237,13 +230,9 @@ class ReleasesMixin(BaseMixin):
             raise SW360Error(message="No release id provided!")
 
         url = self.url + "resource/api/releases/" + release_id
-        response = requests.delete(
-            url, headers=self.api_headers
-        )
+        response = self.api_delete(url)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)
 
     def get_users_of_release(self, release_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about the users of a release

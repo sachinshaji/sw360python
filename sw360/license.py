@@ -50,11 +50,9 @@ class LicenseMixin(BaseMixin):
         license_details["text"] = text
         license_details["checked"] = checked
 
-        response = requests.post(url, json=license_details, headers=self.api_headers)
+        response = self.api_post(url, json=license_details)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)
 
     def delete_license(self, license_shortname: str) -> bool:
         """Delete an existing license
@@ -73,14 +71,9 @@ class LicenseMixin(BaseMixin):
 
         url = self.url + "resource/api/licenses/" + license_shortname
         print(url)
-        response = requests.delete(
-            url, headers=self.api_headers,
-        )
-
+        response = self.api_delete(url)
         if response.ok:
             return True
-
-        raise SW360Error(response, url)
 
     def download_license_info(
         self, project_id: str, filename: str, generator: str = "XhtmlGenerator", variant: str = "DISCLOSURE"

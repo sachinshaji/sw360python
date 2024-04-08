@@ -66,13 +66,10 @@ class VendorMixin(BaseMixin):
         """
 
         url = self.url + "resource/api/vendors"
-        response = requests.post(
-            url, json=vendor, headers=self.api_headers
-        )
+        response = self.api_post(
+            url, json=vendor)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)
 
     def update_vendor(self, vendor: Dict[str, Any], vendor_id: str) -> Dict[str, Any]:
         """Update an existing vendor
@@ -90,13 +87,7 @@ class VendorMixin(BaseMixin):
             raise SW360Error(message="No vendor id provided!")
 
         url = self.url + "resource/api/vendors/" + vendor_id
-        response = requests.patch(
-            url, json=vendor, headers=self.api_headers
-        )
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
+        return self.api_patch(url, json=vendor)
 
     def delete_vendor(self, vendor_id: str) -> Dict[str, Any]:
         """Delete an existing vendor
@@ -114,10 +105,6 @@ class VendorMixin(BaseMixin):
             raise SW360Error(message="No vendor id provided!")
 
         url = self.url + "resource/api/vendors/" + vendor_id
-        response = requests.delete(
-            url, headers=self.api_headers
-        )
+        response = self.api_delete(url)
         if response.ok:
             return response.json()
-
-        raise SW360Error(response, url)

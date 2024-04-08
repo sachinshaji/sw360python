@@ -72,6 +72,117 @@ class BaseMixin():
             return response.json()
 
         raise SW360Error(response, url)
+    
+    def api_post_multipart(self, url: str = "", files: dict[str, Any] = "") -> Optional[Dict[str, Any]]:
+        """
+        Send a multipart POST request to the specified URL with the provided file data.
+
+        :param url: The URL to send the multipart POST request to.
+        :type url: str
+        :param files: The dictionary containing file data to be sent in the request.
+        :type files: Dict[str, Any]
+        :return: The JSON response received from the server, if any.
+        :rtype: Optional[Dict[str, Any]]
+        :raises SW360Error: If the HTTP response indicates an error.
+        """
+
+        if (not self.force_no_session) and self.session is None:
+            raise SW360Error(message="login_api needs to be called first")
+
+        if self.force_no_session:
+            response = requests.post(url, headers=self.api_headers, files=files)
+        else:
+            if self.session:
+                response = self.session.post(url, files=files)
+
+        if response.ok:
+            if response.status_code == 204:  # 204 = no content
+                return None
+            return response
+
+        raise SW360Error(response, url)
+
+    def api_post(self, url: str = "", json: dict[str, Any] = "") -> Optional[Dict[str, Any]]:
+        """
+        Send a POST request to the specified URL with the provided json data.
+
+        :param url: The URL to send the POST request to.
+        :type url: str
+        :param json: The dictionary containing json data to be sent in the request.
+        :type json: Dict[str, Any]
+        :return: The JSON response received from the server, if any.
+        :rtype: Optional[Dict[str, Any]]
+        :raises SW360Error: If the HTTP response indicates an error.
+        """
+
+        if (not self.force_no_session) and self.session is None:
+            raise SW360Error(message="login_api needs to be called first")
+
+        if self.force_no_session:
+            response = requests.post(url, headers=self.api_headers, json=json)
+        else:
+            if self.session:
+                response = self.session.post(url, json=json)
+
+        if response.ok:
+            if response.status_code == 204:  # 204 = no content
+                return None
+            return response
+
+        raise SW360Error(response, url)
+
+    def api_patch(self, url: str = "", json: dict[str, Any] = "") -> Optional[Dict[str, Any]]:
+        """
+        Send a PATCH request to the specified URL with the provided json data.
+
+        :param url: The URL to send the PATCH request to.
+        :type url: str
+        :param json: The dictionary containing json data to be sent in the request.
+        :type json: Dict[str, Any]
+        :return: The JSON response received from the server, if any.
+        :rtype: Optional[Dict[str, Any]]
+        :raises SW360Error: If the HTTP response indicates an error.
+        """
+        if (not self.force_no_session) and self.session is None:
+            raise SW360Error(message="login_api needs to be called first")
+
+        if self.force_no_session:
+            response = requests.patch(url, headers=self.api_headers, json=json)
+        else:
+            if self.session:
+                response = self.session.patch(url, json=json)
+
+        if response.ok:
+            if response.status_code == 204:  # 204 = no content
+                return None
+            return response.json()
+
+        raise SW360Error(response, url)
+
+    def api_delete(self, url: str = "") -> Optional[Dict[str, Any]]:
+        """Send a DELETE request to the specified `url` of the REST API and return JSON response.
+
+        :param url: The URL to which the DELETE request will be sent.
+        :type url: str
+        :return: JSON data returned by the API, or None if the response is empty.
+        :rtype: Optional[Dict[str, Any]]
+        :raises SW360Error: If the API responds with a non-success HTTP status code.
+        """
+        if (not self.force_no_session) and self.session is None:
+            raise SW360Error(message="login_api needs to be called first")
+
+        if self.force_no_session:
+            response = requests.delete(url, headers=self.api_headers)
+        else:
+            if self.session:
+                response = self.session.delete(url)
+
+        if response.ok:
+            if response.status_code == 204:  # 204 = no content
+                return None
+            return response
+
+        raise SW360Error(response, url)
 
     # type checking: not for Python 3.8: tuple[Optional[Any], Dict[str, Dict[str, str]], bool]
     def _update_external_ids(self, current_data: Dict[str, Any], ext_id_name: str, ext_id_value: str,
